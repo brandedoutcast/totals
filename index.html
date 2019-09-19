@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="A Progressive Web App to count characters, words, whitespaces & new lines as you type">
+    <meta name="keywords" content="PWA, Progressive Web App, Count, Characters, Words, Offline, Whitespaces, New Lines, Text">
+
+    <link rel="manifest" href="manifest.json">
+
+    <meta name="theme-color" content="#242424" />
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <link rel="icon" href="icon.png" sizes="256x256">
+
+    <meta name="apple-mobile-web-app-title" content="Totals">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="apple-touch-startup-image" href="icon.png">
+
+    <meta name="application-name" content="Totals">
+    <meta name="msapplication-TileImage" content="icon.png">
+    <meta name="msapplication-TileColor" content="#242424">
+    <meta name="msapplication-tooltip" content="Count as you type">
+    <meta name="msapplication-starturl" content="/">
+
+    <meta name="full-screen" content="yes">
+    <meta name="browsermode" content="application">
+
+    <title>Totals - count as you type</title>
+
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #242424;
+                color: whitesmoke;
+            }
+
+            #wrapper.dark {
+                background-color: #242424;
+                color: whitesmoke;
+            }
+
+            #input.dark {
+                background-color: #242424;
+                color: whitesmoke;
+            }
+        }
+
+        @media (prefers-color-scheme: light) {
+            body {
+                background-color: whitesmoke;
+                color: #242424;
+            }
+
+            #wrapper.light {
+                background-color: whitesmoke;
+                color: #242424;
+            }
+
+            #input.light {
+                background-color: whitesmoke;
+                color: #242424;
+            }
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .flash {
+            background-color: yellow;
+        }
+
+        #wrapper {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            max-width: 1200px;
+            margin: 0 auto;
+            user-select: none;
+        }
+
+        header {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        header,
+        #stats {
+            padding: .5em 1em;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        #stats {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .metric {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .count {
+            font-weight: bold;
+            font-size: 1.25em;
+            transition: background-color .25s ease-in-out;
+        }
+
+        .metric>span:not(.count) {
+            font-size: .5em;
+        }
+
+        #editor {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: .5em 1em;
+        }
+
+        #toolbox {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .tool {
+            padding: 0.25em;
+            width: 1.75em;
+            height: 1.75em;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
+
+        #input {
+            flex: 1;
+            padding: 0.5em;
+            box-sizing: border-box;
+            border: 1px deepskyblue solid;
+            resize: none;
+            outline: none;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrapper" class="light dark">
+        <header>Totals</header>
+        <main>
+            <div id="stats">
+                <div class="metric"><span class="count" id="chars">0</span><span>Chars</span></div>
+                <div class="metric"><span class="count" id="words">0</span><span>Words</span></div>
+                <div class="metric"><span class="count" id="spaces">0</span><span>Spaces</span></div>
+                <div class="metric"><span class="count" id="lines">0</span><span>Lines</span></div>
+            </div>
+            <div id="editor">
+                <div id="toolbox">
+                    <svg id="clear" class="tool" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    <svg id="share" hidden class="tool hide" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="18" cy="5" r="3"></circle>
+                        <circle cx="6" cy="12" r="3"></circle>
+                        <circle cx="18" cy="19" r="3"></circle>
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                    </svg>
+                </div>
+                <textarea id="input" class="light dark" placeholder="type here"></textarea>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        (function () {
+            let inputEl = document.getElementById("input"),
+                clearEl = document.getElementById("clear"),
+                shareEl = document.getElementById("share"),
+                spacesEl = document.getElementById("spaces"),
+                charsEl = document.getElementById("chars"),
+                wordsEl = document.getElementById("words"),
+                linesEl = document.getElementById("lines")
+
+            function setInputVal(data) {
+                inputEl.value = data
+                inputEl.dispatchEvent(new KeyboardEvent("keyup"))
+            }
+
+            inputEl.addEventListener("keyup", function () {
+                let data = inputEl.value,
+                    chars = (data.match(/\S/g) || []).length,
+                    words = (data.match(/\s*\S+\s*/g) || []).length,
+                    spaces = (data.match(/ /g) || []).length,
+                    lines = data ? (data.match(/\n\r?/g) || []).length + 1 : 0
+
+                if (charsEl.textContent != chars) {
+                    charsEl.textContent = chars
+                    charsEl.classList.add("flash")
+                    charsEl.classList.remove("flash")
+                }
+
+                if (wordsEl.textContent != words) {
+                    wordsEl.textContent = words
+                    wordsEl.classList.add("flash")
+                    wordsEl.classList.remove("flash")
+                }
+
+                if (spacesEl.textContent != spaces) {
+                    spacesEl.textContent = spaces
+                    spacesEl.classList.add("flash")
+                    spacesEl.classList.remove("flash")
+                }
+
+                if (linesEl.textContent != lines) {
+                    linesEl.textContent = lines
+                    linesEl.classList.add("flash")
+                    linesEl.classList.remove("flash")
+                }
+            })
+
+            clearEl.addEventListener("click", function () {
+                setInputVal(null)
+            })
+
+            if ("share" in navigator) {
+                shareEl.classList.remove("hide")
+                shareEl.addEventListener("click", function () {
+                    navigator.share({
+                        text: inputEl.value,
+                        url: window.location.origin
+                    }).catch(error => console.log("😭 Error Sharing:", error))
+                })
+            }
+
+            const parsedUrl = new URL(window.location)
+            const data = parsedUrl.searchParams.get("text")
+
+            if (data) setInputVal(data)
+
+            if ("serviceWorker" in navigator)
+                navigator.serviceWorker.register("sw.js")
+        })()
+    </script>
+</body>
+
+</html>

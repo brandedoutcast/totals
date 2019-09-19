@@ -1,0 +1,26 @@
+{
+    "name": "Totals",
+    "short_name": "Totals",
+    "description": "Totals - count text as you type!",
+    "background_color": "#242424",
+    "theme_color": "#242424",
+    "display": "standalone",
+    "orientation": "any",
+    "start_url": "/",
+    "lang": "en",
+    "icons": [
+        {
+            "src": "icon.png",
+            "sizes": "256x256",
+            "type": "image/png"
+        }
+    ],
+    "share_target": {
+        "action": "/",
+        "method": "GET",
+        "enctype": "application/x-www-form-urlencoded",
+        "params": {
+            "text": "text"
+        }
+    }
+}
