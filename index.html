@@ -184,7 +184,7 @@
                         <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
                     </svg>
                 </div>
-                <textarea id="input" class="light dark" placeholder="type here"></textarea>
+                <textarea id="input" class="light dark" autofocus placeholder="type here"></textarea>
             </div>
         </main>
     </div>
@@ -238,6 +238,7 @@
 
             clearEl.addEventListener("click", function () {
                 setInputVal(null)
+                inputEl.focus()
             })
 
             if ("share" in navigator) {

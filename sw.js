@@ -1,4 +1,4 @@
-const cacheName = "totals-cache-v0.1.0",
+const cacheName = "totals-cache-v0.1.1",
     assets = [
         "./",
         "index.html",
